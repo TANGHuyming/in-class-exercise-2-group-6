@@ -15,7 +15,12 @@ router.post("/api/logout", publicController.logout);
 router.get("/", protect, publicController.home);
 router.get("/home", protect, publicController.home);
 
-router.get("/", protect, publicController.home);
-router.get("/home", protect, publicController.home);
+// CRUD records 
+router.get("/api/records", protect, publicController.getRecords);
+router.post("/api/records", protect, publicController.postRecords);
+router.put("/api/records", protect, publicController.putRecords);
+router.delete("/api/records", protect, publicController.deleteRecords);
+
+router.use(publicController.notFound);
 
 module.exports = router;
