@@ -6,13 +6,13 @@ const authenticateSession = (req, res, next) => {
     if(req.session && req.session.user) {
         return next();
     }
-    return res.status(401).redirect('/login');
+    return res.status(401).redirect('/api/login');
 }
 
 const verifyToken = (req, res, next) => {
     const token = req.headers['authorization'];
     if(!token) {
-        return res.status(401).redirect('/login');
+        return res.status(401).redirect('/api/login');
     };
     jwt.verify(token, process.env.JWT_SECRET || 'secret', (err, decoded) => {
         if(err) {
@@ -26,14 +26,15 @@ const verifyToken = (req, res, next) => {
 const login = async (req, res, next) => {
     try {
         const { email, password } = req.body;
-        console.log(email, password);
+        // console.log(email, password);
+        console.log(users);
         const user = users.find(u => u.email === email);
         if(!user) {
-            return res.status(401).redirect('/login');
+            return res.status(401).redirect('/api/login');
         }
 
         if(user.password !== password) {
-            return res.status(401).redirect('/login');
+            return res.status(401).redirect('/api/login');
         }
         
         const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET || 'secret', { expiresIn: '1h' });
