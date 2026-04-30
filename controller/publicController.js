@@ -1,4 +1,5 @@
 const { data } = require("../model/data")
+const { getFuelSummaryContext } = require("../utils/fuelSummary");
 
 exports.login = (req, res) => {
     res.render('auth/login', {title: 'Login'});
@@ -27,16 +28,16 @@ exports.home = async (req, res, next) => {
     }
 }
 
-exports.getRecords = async (req, res, next) => { 
+exports.getRecords = (req, res, next) => { 
     try { 
-        return res.render('dashboard/dashboard', { title: 'Dashboard', fuel: data }); 
+        return res.render("dashboard/dashboard", getFuelSummaryContext(data)); 
     } catch (err) { 
         console.log(err); 
         next(err);
     }
 }
 
-exports.postRecords = async (req, res, next) => {
+exports.postRecords = (req, res, next) => {
     try { 
         const newRecord = req.body;
         data.push(newRecord);
@@ -47,7 +48,7 @@ exports.postRecords = async (req, res, next) => {
     }
 }
 
-exports.putRecords = async (req, res, next) => {
+exports.putRecords = (req, res, next) => {
     try { 
         const { id } = req.body;
         const recordIndex = data.findIndex((record) => record.id === id);
@@ -62,7 +63,7 @@ exports.putRecords = async (req, res, next) => {
     }
 }
 
-exports.deleteRecords = async (req, res, next) => {
+exports.deleteRecords = (req, res, next) => {
     try { 
         const { id } = req.body;
         const recordIndex = data.findIndex((record) => record.id === id);

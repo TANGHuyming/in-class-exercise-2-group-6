@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const { getFuelSummaryContext } = require("../utils/fuelSummary");
 const middlewares = require('../middlewares/middlewares');
 const publicController = require("../controller/publicController");
 
@@ -16,10 +17,10 @@ router.get("/", publicController.home);
 router.get("/home", publicController.home);
 
 // // CRUD records 
-router.get("/api/records", publicController.getRecords);
-router.post("/api/records", publicController.postRecords);
-router.put("/api/records", publicController.putRecords);
-router.delete("/api/records", publicController.deleteRecords);
+router.get("/api/dashboard", publicController.getRecords);
+router.post("/api/dashboard", publicController.postRecords);
+router.put("/api/dashboard", publicController.putRecords);
+router.delete("/api/dashboard", publicController.deleteRecords);
 
 // router.use(publicController.notFound);
 
