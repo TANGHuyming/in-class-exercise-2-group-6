@@ -40,7 +40,6 @@ app.use(cookieParser());
 app.use(csrf({ cookie: true }));
 app.use(cors({origin: 'http://localhost:3000'}));
 app.use(morgan('dev'));
-app.use(verifyToken);
 app.disable('x-powered-by');
 
 // Routes

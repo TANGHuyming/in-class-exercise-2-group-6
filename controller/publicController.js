@@ -1,9 +1,9 @@
 exports.login = (req, res) => {
-    res.render('login');
+    res.render('auth/login', {title: 'Login'});
 }
 
 exports.register = (req, res) => {
-    res.render('register');
+    res.render('auth/register', {title: 'Register'});
 }
 
 exports.logout = (req, res) => {

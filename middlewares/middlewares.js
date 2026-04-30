@@ -6,17 +6,17 @@ const authenticateSession = (req, res, next) => {
     if(req.session && req.session.user) {
         return next();
     }
-    return res.status(401).redirect('/login').json({ message: 'Unauthorized' });
+    return res.status(401).redirect('/login');
 }
 
 const verifyToken = (req, res, next) => {
     const token = req.headers['authorization'];
     if(!token) {
-        return res.status(401).redirect('/login').json({ message: 'No token provided' });
+        return res.status(401).redirect('/login');
     };
     jwt.verify(token, process.env.JWT_SECRET || 'secret', (err, decoded) => {
         if(err) {
-            return res.status(401).redirect('/login').json({ message: 'Invalid token' });
+            return null
         }
         req.user = decoded;
         next();
@@ -26,19 +26,16 @@ const verifyToken = (req, res, next) => {
 const login = async (req, res, next) => {
     try {
         const { email, password } = req.body;
+        console.log(email, password);
         const user = users.find(u => u.email === email);
         if(!user) {
-            return res.status(401).redirect('/login').json({ message: 'Invalid credentials' });
+            return res.status(401).redirect('/login');
         }
 
         if(user.password !== password) {
-            return res.status(401).redirect('/login').json({ message: 'Invalid credentials' });
+            return res.status(401).redirect('/login');
         }
-
-        if(!isPasswordValid) {
-            return res.status(401).redirect('/login').json({ message: 'Invalid credentials' });
-        }
-
+        
         const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET || 'secret', { expiresIn: '1h' });
         req.session.user = { username: user.name, token };
         res.json({ token });
