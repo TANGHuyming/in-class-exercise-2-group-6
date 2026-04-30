@@ -1,0 +1,213 @@
+<div class="flex flex-col items-center px-8 py-6">
+  <div class="w-full max-w-4xl bg-white rounded-2xl shadow-lg p-6">
+
+    <h2 class="text-xl font-bold mb-4 text-center">Fuel Expenditure Summary</h2>
+
+    {{!-- Tab Buttons --}}
+    <div class="flex border-b border-gray-200 mb-6">
+      <button
+        onclick="switchFuelTab('week', this)"
+        id="tab-week"
+        class="tab-btn px-6 py-2 text-sm font-medium text-blue-600 border-b-2 border-blue-500">
+        By Week
+      </button>
+      <button
+        onclick="switchFuelTab('month', this)"
+        id="tab-month"
+        class="tab-btn px-6 py-2 text-sm font-medium text-gray-500 border-b-2 border-transparent">
+        By Month
+      </button>
+    </div>
+
+    {{!-- Summary Cards --}}
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      <div class="bg-gray-50 rounded-lg p-4">
+        <p class="text-xs text-gray-500 mb-1">Total Spend</p>
+        <p class="text-2xl font-semibold">${{totalCost}}</p>
+      </div>
+      <div class="bg-gray-50 rounded-lg p-4">
+        <p class="text-xs text-gray-500 mb-1">Total Liters</p>
+        <p class="text-2xl font-semibold">{{totalLiters}} L</p>
+      </div>
+      <div class="bg-gray-50 rounded-lg p-4">
+        <p class="text-xs text-gray-500 mb-1">Avg Cost / Fill</p>
+        <p class="text-2xl font-semibold">${{avgCostPerFill}}</p>
+      </div>
+      <div class="bg-gray-50 rounded-lg p-4">
+        <p class="text-xs text-gray-500 mb-1">Periods Tracked</p>
+        <p class="text-2xl font-semibold">{{periodsCount}}</p>
+      </div>
+    </div>
+
+    {{!-- Add Fuel Record Form --}}
+    <div class="mb-6 border border-gray-200 rounded-xl p-5">
+      <h3 class="text-base font-semibold mb-4 text-gray-700">Add Fuel Record</h3>
+      <form action="/api/dashboard" method="POST">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+          <div>
+            <label class="block text-xs text-gray-500 mb-1">Date</label>
+            <input
+              type="date"
+              name="date"
+              required
+              class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300" />
+          </div>
+
+          <div>
+            <label class="block text-xs text-gray-500 mb-1">Vehicle Type</label>
+            <select
+              name="vehicleType"
+              required
+              class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300">
+              <option value="">Select vehicle</option>
+              <option value="Car">Car</option>
+              <option value="Motorcycle">Motorcycle</option>
+              <option value="Truck">Truck</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs text-gray-500 mb-1">Liters</label>
+            <input
+              type="number"
+              name="liters"
+              step="0.01"
+              min="0"
+              required
+              placeholder="e.g. 50"
+              class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300" />
+          </div>
+
+          <div>
+            <label class="block text-xs text-gray-500 mb-1">Total Cost ($)</label>
+            <input
+              type="number"
+              name="totalCost"
+              step="0.01"
+              min="0"
+              required
+              placeholder="e.g. 82.50"
+              class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300" />
+          </div>
+
+          <div>
+            <label class="block text-xs text-gray-500 mb-1">Location</label>
+            <input
+              type="text"
+              name="location"
+              required
+              placeholder="e.g. Shell Station, Main St"
+              class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300" />
+          </div>
+
+          <div>
+            <label class="block text-xs text-gray-500 mb-1">Distance Traveled (km)</label>
+            <input
+              type="number"
+              name="distanceTraveled"
+              step="0.1"
+              min="0"
+              required
+              placeholder="e.g. 620"
+              class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300" />
+          </div>
+
+        </div>
+
+        <div class="mt-4 flex justify-end">
+          <button
+            type="submit"
+            class="bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium px-6 py-2 rounded-lg transition-colors">
+            Add Record
+          </button>
+        </div>
+      </form>
+    </div>
+
+    {{!-- Week View --}}
+    <div id="view-week">
+      <div class="overflow-x-auto">
+        <table class="min-w-full border border-gray-200 rounded-lg">
+          <thead class="bg-blue-500 text-white">
+            <tr>
+              <th class="px-4 py-2 text-left">Week</th>
+              <th class="px-4 py-2 text-left">Vehicles</th>
+              <th class="px-4 py-2 text-left">Fills</th>
+              <th class="px-4 py-2 text-left">Liters</th>
+              <th class="px-4 py-2 text-left">Total Spend</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each weekSummary}}
+            <tr class="border-b hover:bg-gray-50">
+              <td class="px-4 py-2 font-mono text-xs">{{this.label}}</td>
+              <td class="px-4 py-2">
+                {{#each this.vehicles}}
+                  <span class="inline-block px-2 py-0.5 rounded text-xs font-medium mr-1
+                    {{#if (eq this 'Car')}}bg-blue-100 text-blue-800{{else}}bg-purple-100 text-purple-800{{/if}}">
+                    {{this}}
+                  </span>
+                {{/each}}
+              </td>
+              <td class="px-4 py-2">{{this.fills}}</td>
+              <td class="px-4 py-2">{{this.totalLiters}} L</td>
+              <td class="px-4 py-2 font-semibold">${{this.totalCost}}</td>
+            </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    {{!-- Month View --}}
+    <div id="view-month" class="hidden">
+      <div class="overflow-x-auto">
+        <table class="min-w-full border border-gray-200 rounded-lg">
+          <thead class="bg-blue-500 text-white">
+            <tr>
+              <th class="px-4 py-2 text-left">Month</th>
+              <th class="px-4 py-2 text-left">Vehicles</th>
+              <th class="px-4 py-2 text-left">Fills</th>
+              <th class="px-4 py-2 text-left">Liters</th>
+              <th class="px-4 py-2 text-left">Total Spend</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each monthSummary}}
+            <tr class="border-b hover:bg-gray-50">
+              <td class="px-4 py-2 font-medium">{{this.label}}</td>
+              <td class="px-4 py-2">
+                {{#each this.vehicles}}
+                  <span class="inline-block px-2 py-0.5 rounded text-xs font-medium mr-1
+                    {{#if (eq this 'Car')}}bg-blue-100 text-blue-800{{else}}bg-purple-100 text-purple-800{{/if}}">
+                    {{this}}
+                  </span>
+                {{/each}}
+              </td>
+              <td class="px-4 py-2">{{this.fills}}</td>
+              <td class="px-4 py-2">{{this.totalLiters}} L</td>
+              <td class="px-4 py-2 font-semibold">${{this.totalCost}}</td>
+            </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  function switchFuelTab(tab, btn) {
+    document.getElementById('view-week').classList.add('hidden');
+    document.getElementById('view-month').classList.add('hidden');
+    document.getElementById('view-' + tab).classList.remove('hidden');
+    document.querySelectorAll('.tab-btn').forEach(b => {
+      b.classList.remove('text-blue-600', 'border-blue-500');
+      b.classList.add('text-gray-500', 'border-transparent');
+    });
+    btn.classList.remove('text-gray-500', 'border-transparent');
+    btn.classList.add('text-blue-600', 'border-blue-500');
+  }
+</script>
