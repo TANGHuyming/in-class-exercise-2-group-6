@@ -2,11 +2,11 @@ const { data } = require("../model/data")
 const { getFuelSummaryContext } = require("../utils/fuelSummary");
 
 exports.login = (req, res) => {
-    res.render('auth/login', {title: 'Login'});
+    res.render('auth/login', {title: 'Login', csrfToken: req.csrfToken()});
 }
 
 exports.register = (req, res) => {
-    res.render('auth/register', {title: 'Register'});
+    res.render('auth/register', {title: 'Register', csrfToken: req.csrfToken()});
 }
 
 exports.logout = (req, res) => {

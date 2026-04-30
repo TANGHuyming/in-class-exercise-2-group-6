@@ -44,7 +44,9 @@
       <h3 class="text-base font-semibold mb-4 text-gray-700">Add Fuel Record</h3>
       <form action="/api/dashboard" method="POST">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-
+          <div class="hidden">
+            <input type="hidden" name="_csrf" value="{{csrfToken}}" />
+          </div>
           <div>
             <label class="block text-xs text-gray-500 mb-1">Date</label>
             <input
