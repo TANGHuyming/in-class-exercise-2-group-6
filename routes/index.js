@@ -16,10 +16,10 @@ router.post("/api/logout", publicController.logout);
 // router.get("/home", publicController.home);
 
 // // CRUD records 
-// router.get("/api/records", publicController.getRecords);
-// router.post("/api/records", publicController.postRecords);
-// router.put("/api/records", publicController.putRecords);
-// router.delete("/api/records", publicController.deleteRecords);
+router.get("/api/records", publicController.getRecords);
+router.post("/api/records", publicController.postRecords);
+router.put("/api/records", publicController.putRecords);
+router.delete("/api/records", publicController.deleteRecords);
 
 // router.use(publicController.notFound);
 
