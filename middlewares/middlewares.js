@@ -2,12 +2,19 @@
 const jwt = require('jsonwebtoken');
 const { users } = require('../data/users');
 
+const authenticateSession = (req, res, next) => {
+    if(req.session && req.session.user) {
+        return next();
+    }
+    return res.status(401).redirect('/login').json({ message: 'Unauthorized' });
+}
+
 const verifyToken = (req, res, next) => {
     const token = req.headers['authorization'];
     if(!token) {
         return res.status(401).redirect('/login').json({ message: 'No token provided' });
     };
-    jwt.verify(token, 'secret', (err, decoded) => {
+    jwt.verify(token, process.env.JWT_SECRET || 'secret', (err, decoded) => {
         if(err) {
             return res.status(401).redirect('/login').json({ message: 'Invalid token' });
         }
@@ -32,7 +39,8 @@ const login = async (req, res, next) => {
             return res.status(401).redirect('/login').json({ message: 'Invalid credentials' });
         }
 
-        const token = jwt.sign({ userId: user.id }, 'secret', { expiresIn: '1h' });
+        const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET || 'secret', { expiresIn: '1h' });
+        req.session.user = { username: user.name, token };
         res.json({ token });
     }
     catch(err) {

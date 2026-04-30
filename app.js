@@ -31,7 +31,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
-  secret: process.env.SECRET || 'secret-becret',
+  secret: process.env.SECRET || 'secret',
   resave: false,
   saveUninitialized: true,
   cookie: { secure: false }
@@ -41,6 +41,7 @@ app.use(csrf({ cookie: true }));
 app.use(cors({origin: 'http://localhost:3000'}));
 app.use(morgan('dev'));
 app.use(verifyToken);
+app.disable('x-powered-by');
 
 // Routes
 app.use('/', indexRouter);
