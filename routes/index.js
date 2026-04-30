@@ -1,12 +1,14 @@
 const express = require('express');
 const router = express.Router();
+const { protect } = require("../middleware/authMiddleware");
+const publicController = require("../controllers/public.controller");
 
-// GET home page
-router.get('/', (req, res) => {
-  res.render('index', {
-    title: 'Express + Handlebars',
-    message: 'Welcome to your Express Handlebars app!'
-  });
-});
+// Home 
+router.get("/", protect, publicController.home);
+router.get("/home", protect, publicController.home);
+
+router.get("/", protect, publicController.home);
+router.get("/home", protect, publicController.home);
+
 
 module.exports = router;
