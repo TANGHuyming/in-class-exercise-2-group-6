@@ -1,4 +1,4 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 const middlewares = require('../middlewares/middlewares');
 const publicController = require("../controllers/public.controller");
