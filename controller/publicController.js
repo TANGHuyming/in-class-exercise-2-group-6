@@ -1,3 +1,5 @@
+const { data } = require("../model/data")
+
 exports.login = (req, res) => {
     res.render('auth/login', {title: 'Login'});
 }
@@ -16,11 +18,6 @@ exports.logout = (req, res) => {
     res.redirect('/login');
 }
 
-
-const { data } = require("../model/data")
-
-
-
 exports.home = async (req, res, next) => { 
     try { 
         return res.JSON(data); 
@@ -30,12 +27,51 @@ exports.home = async (req, res, next) => {
     }
 }
 
-
-
 exports.getRecords = async (req, res, next) => { 
     try { 
-        return res.JSON(data); 
+        return res.render('dashboard/dashboard', { title: 'Dashboard', fuel: data }); 
     } catch (err) { 
+        console.log(err); 
+        next(err);
+    }
+}
+
+exports.postRecords = async (req, res, next) => {
+    try { 
+        const newRecord = req.body;
+        data.push(newRecord);
+        return res.redirect('/api/records'); 
+    } catch (err) { 
+        console.log(err); 
+        next(err);
+    }
+}
+
+exports.putRecords = async (req, res, next) => {
+    try { 
+        const { id } = req.body;
+        const recordIndex = data.findIndex((record) => record.id === id);
+        if (recordIndex !== -1) {
+            data[recordIndex] = { ...data[recordIndex], ...req.body };
+        }
+        return res.redirect('/api/records');
+    }
+    catch (err) {
+        console.log(err); 
+        next(err);
+    }
+}
+
+exports.deleteRecords = async (req, res, next) => {
+    try { 
+        const { id } = req.body;
+        const recordIndex = data.findIndex((record) => record.id === id);
+        if (recordIndex !== -1) {
+            data.splice(recordIndex, 1);
+        }
+        return res.redirect('/api/records');
+    }
+    catch (err) {
         console.log(err); 
         next(err);
     }
